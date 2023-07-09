@@ -11,7 +11,7 @@ private:
 public:
     Stack(NodePtr = NULL);
     ~Stack();
-    char pop();
+    int pop();
     void push(int);
     int get_size(){return size;}
 };
@@ -38,9 +38,9 @@ void Stack::push(int x){
  else cout<<"No memory left for new nodes"<<endl;
 		 // Left missing for exercises…
 }
-char Stack::pop(){
+int Stack::pop(){
  	   NodePtr t=top;
-		char value;		
+		int value;		
 	 if(t)	{
     
      value=t->get_value();

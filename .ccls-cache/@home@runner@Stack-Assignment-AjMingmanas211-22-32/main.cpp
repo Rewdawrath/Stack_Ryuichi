@@ -1,59 +1,56 @@
 #include <iostream>
-using namespace std;
 #include "stack.h"
-#include <cstring>
+#include <string>
+using namespace std;
 
-int main(int argc, char *argv[]) {
-  int match;
-  int kuay,hum;
-  char c;
-  for(int j=1;j<argc;j++){
-    Stack s;
-    match=1;
-    kuay=0;
-    hum=0;
-    for(int i=0;i<strlen(argv[j]);i++){
-    switch(argv[j][i])
-    {
-      case '[':
-        s.push(argv[j][i]);
-        kuay--;
-        break;
+bool isMatchingPair(char open, char close) {
+    return (open == '(' && close == ')') ||
+           (open == '[' && close == ']') ||
+           (open == '{' && close == '}');
+}
 
-      case '{':
-        s.push(argv[j][i]);
-        hum--;
-        break;
-
-      case '}':
-        c=s.pop();
-        kuay++;
-        if(c!='{'){
-          match=0;
+bool isBalanced(const string& expression, int& countOpen, int& countClose) {
+    Stack stack;
+    for (char c : expression) {
+        if (c == '(' || c == '[' || c == '{') {
+            stack.push(c);
+            countOpen++;
+        } else if (c == ')' || c == ']' || c == '}') {
+            if (stack.isEmpty() || !isMatchingPair(stack.get_top(), c)) {
+                countClose++;
+                continue;
+            }
+            stack.pop();
+            countOpen--;
         }
-        break;
-      case ']':
-        c=s.pop();
-        hum++;
-        if(c!='['){
-          match=0;
-        }
-        break;
-      
-      default: break;
-      }
-    }
-    if(match==1){
-    cout<<"match"<<endl;
-    }else if(match==0 && kuay>0 && hum<0){
-    cout<<"too much open parenthesis"<<endl;
-    }else if(match==0 && hum>0 && kuay<0){
-    cout<<"too much close parenthesis"<<endl;
-    }else if(match==0 && kuay==0 && hum==0){
-    cout<<"not match"<<endl;
     }
     
-  }
+    return stack.isEmpty() && countOpen == 0 && countClose == 0;
+}
 
-  }
+int main(int argc, char* argv[]) {
+    if (argc > 1) {
+        for (int i = 1; i < argc; ++i) {
+            string expression = argv[i];
+            int countOpen = 0;
+            int countClose = 0;
+            bool balanced = isBalanced(expression, countOpen, countClose);
+            
+            if (balanced) {
+                cout << expression << ": Match" << endl;
+            } else {
+                cout << expression << ": Not Match";
+                if (countOpen > countClose) {
+                    cout << " > Too many open parentheses";
+                } else if (countClose > countOpen) {
+                    cout << " > Too many close parentheses";
+                }
+                cout << endl;
+            }
+        }
+    } else {
+        cout << "No arguments provided." << endl;
+    }
 
+    return 0;
+}
